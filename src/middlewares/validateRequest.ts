@@ -1,4 +1,3 @@
-// src/middleware/validateSchemaParts.ts
 import { Request, Response, NextFunction } from 'express';
 import Joi from 'joi';
 
@@ -20,7 +19,7 @@ export const validate = (schemaMap: SchemaMap) => {
       const schema = schemaMap[part];
       if (!schema) continue;
 
-      const { error, value } = schema.validate(req[part], {
+      const { error } = schema.validate(req[part], {
         abortEarly: false,
         stripUnknown: true,
       });

@@ -79,3 +79,35 @@ CREATE TABLE IF NOT EXISTS comment_reactions_by_user (
   reacted_at TIMESTAMP,
   PRIMARY KEY ((user_id), video_id, comment_id)
 );
+
+
+--Seeding videos
+INSERT INTO videos (
+    video_id, title, description, thumbnail_url, created_at
+) VALUES (
+    3fa85f64-5717-4562-b3fc-2c963f66afa6,
+    'JavaScript Fundamentals in 15 Minutes',
+    'A quick crash course on JavaScript basics including variables, functions, and DOM.',
+    'https://example.com/thumbs/js-fundamentals.jpg',
+    '2024-01-10 10:30:00'
+);
+
+INSERT INTO videos (
+    video_id, title, description, thumbnail_url, created_at
+) VALUES (
+    a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11,
+    'Getting Started with Node.js',
+    'Learn what Node.js is, why it’s popular, and how to build your first app.',
+    'https://example.com/thumbs/nodejs-intro.jpg',
+    '2024-02-15 15:45:00'
+);
+
+INSERT INTO videos (
+    video_id, title, description, thumbnail_url, created_at
+) VALUES (
+    9b2c2d3d-e333-4dbb-a52f-cf3eae3d8ad0,
+    'Build a REST API with Express.js',
+    'A hands-on guide to creating RESTful APIs using Express.js and Node.js.',
+    'https://example.com/thumbs/express-api.jpg',
+    '2024-03-20 09:00:00'
+);

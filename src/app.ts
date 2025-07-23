@@ -25,15 +25,15 @@ app.use(errorHandler);
 
 // Start the server
 (async()=>{
-    await connectScyllaDb();
-    app.listen(PORT, () => {
-        console.log(`Server is running on http://localhost:${PORT}`);
-    });
+  await connectScyllaDb();
+  app.listen(PORT, () => {
+    console.log(`Server is running on http://localhost:${PORT}`);
+  });
 })();
 
 //disconnect Scylladb on process exit
-process.on('SIGINT', async () => {
-    console.log('Shutting down server...');
-    await disconnectScyllaDb();
-    process.exit(0);
+process.on('SIGINT', async() => {
+  console.log('Shutting down server...');
+  await disconnectScyllaDb();
+  process.exit(0);
 });

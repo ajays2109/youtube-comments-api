@@ -1,7 +1,7 @@
 # YouTube Comments API
 
 A ScyllaDB-powered, Node.js & TypeScript REST API for a YouTube-style comment system.  
-Supports videos, comments, replies, user management, and reactions (likes/dislikes).
+Supports videos, comments, replies, and reactions (likes/dislikes).
 
 ## Features
 
@@ -67,7 +67,7 @@ Server runs at [http://localhost:3000](http://localhost:3000).
 
 ### API Documentation
 
-- Swagger/OpenAPI spec: [`src/docs/swagger.json`](src/docs/swagger.json)
+- Postman collection [Link](https://documenter.getpostman.com/view/23770252/2sB34mjJvc#intro).
 
 ## Scripts
 

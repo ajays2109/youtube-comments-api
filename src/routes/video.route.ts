@@ -1,7 +1,11 @@
-import { Router } from "express";
+import { Router } from 'express';
 const router = Router();
-import { getVideos } from "../controllers/video.controller";
+import { getVideos } from '../controllers/video.controller';
 
-router.get("/", getVideos);
+/**
+ * Route to get all videos
+ * This can be used to fetch a list of videos for the homepage
+ */
+router.get('/', getVideos);
 
 export default router;
