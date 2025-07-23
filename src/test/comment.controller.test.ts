@@ -20,7 +20,7 @@ describe('Comment Controller', () => {
   });
 
   describe('createComment', () => {
-    it('should create a comment and return 201', async () => {
+    it('should create a comment and return 201', async() => {
       mockReq = {
         body: {
           videoId: 'vid123',
@@ -55,7 +55,7 @@ describe('Comment Controller', () => {
       });
     });
 
-    it('should call next on error', async () => {
+    it('should call next on error', async() => {
       const error = new Error('Create failed');
       (commentService.createComment as jest.Mock).mockRejectedValue(error);
 
@@ -74,7 +74,7 @@ describe('Comment Controller', () => {
   });
 
   describe('getCommentsByVideo', () => {
-    it('should return comments for a video', async () => {
+    it('should return comments for a video', async() => {
       const comments = [{ commentId: 'c1' }, { commentId: 'c2' }];
       (commentService.getCommentsByVideo as jest.Mock).mockResolvedValue(comments);
 
@@ -97,7 +97,7 @@ describe('Comment Controller', () => {
       });
     });
 
-    it('should call next on error', async () => {
+    it('should call next on error', async() => {
       const error = new Error('Fetch failed');
       (commentService.getCommentsByVideo as jest.Mock).mockRejectedValue(error);
 
@@ -116,7 +116,7 @@ describe('Comment Controller', () => {
   });
 
   describe('reactToComment', () => {
-    it('should react to a comment and return success', async () => {
+    it('should react to a comment and return success', async() => {
       mockReq = {
         body: {
           videoId: 'vid123',
@@ -137,7 +137,7 @@ describe('Comment Controller', () => {
       });
     });
 
-    it('should call next on error', async () => {
+    it('should call next on error', async() => {
       const error = new Error('React failed');
       (commentService.reactToComment as jest.Mock).mockRejectedValue(error);
 

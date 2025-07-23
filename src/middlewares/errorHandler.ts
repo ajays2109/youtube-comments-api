@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import logger from '../logger/winston';
 
 /**
@@ -6,7 +6,7 @@ import logger from '../logger/winston';
  * Logs the error details and sends a generic error response.
  */
 
-export function errorHandler(err: Error, req: Request, res: Response) {
+export function errorHandler(err: Error, req: Request, res: Response, next: NextFunction) {
   // Log the error details
   logger.error({
     message: err.message,

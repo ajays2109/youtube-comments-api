@@ -4,7 +4,6 @@ import {
   reactToReply,
 } from '../controllers/reply.controller';
 import replyService from '../services/reply.service';
-import { v1 as uuidv1 } from 'uuid';
 
 jest.mock('../services/reply.service');
 jest.mock('uuid', () => ({
@@ -25,7 +24,7 @@ describe('Reply Controller', () => {
   });
 
   describe('createReply', () => {
-    it('should create a reply and return 201', async () => {
+    it('should create a reply and return 201', async() => {
       mockReq = {
         body: {
           parentCommentId: 'comment123',
@@ -60,7 +59,7 @@ describe('Reply Controller', () => {
       });
     });
 
-    it('should call next on error', async () => {
+    it('should call next on error', async() => {
       const error = new Error('Create failed');
       (replyService.createReply as jest.Mock).mockRejectedValue(error);
 
@@ -80,7 +79,7 @@ describe('Reply Controller', () => {
   });
 
   describe('getRepliesByComment', () => {
-    it('should return replies for a comment', async () => {
+    it('should return replies for a comment', async() => {
       const replies = [{ replyId: 'r1' }, { replyId: 'r2' }];
       (replyService.getRepliesByComment as jest.Mock).mockResolvedValue(replies);
 
@@ -102,7 +101,7 @@ describe('Reply Controller', () => {
       });
     });
 
-    it('should call next on error', async () => {
+    it('should call next on error', async() => {
       const error = new Error('Fetch failed');
       (replyService.getRepliesByComment as jest.Mock).mockRejectedValue(error);
 
@@ -120,7 +119,7 @@ describe('Reply Controller', () => {
   });
 
   describe('reactToReply', () => {
-    it('should react to a reply and return success', async () => {
+    it('should react to a reply and return success', async() => {
       mockReq = {
         body: {
           commentId: 'comment123',
@@ -141,7 +140,7 @@ describe('Reply Controller', () => {
       });
     });
 
-    it('should call next on error', async () => {
+    it('should call next on error', async() => {
       const error = new Error('Reaction failed');
       (replyService.reactToReply as jest.Mock).mockRejectedValue(error);
 

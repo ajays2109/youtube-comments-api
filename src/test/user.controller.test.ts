@@ -1,6 +1,5 @@
 import { createUser } from '../controllers/user.controller';
 import userService from '../services/user.service';
-import { v4 as uuidv4 } from 'uuid';
 
 jest.mock('../services/user.service');
 jest.mock('uuid', () => ({
@@ -20,7 +19,7 @@ describe('User Controller - createUser', () => {
     mockNext = jest.fn();
   });
 
-  it('should create a user and return 201', async () => {
+  it('should create a user and return 201', async() => {
     const createdUser = {
       userId: 'mocked-user-id',
       userName: 'Ajay',
@@ -51,7 +50,7 @@ describe('User Controller - createUser', () => {
     });
   });
 
-  it('should call next on error', async () => {
+  it('should call next on error', async() => {
     const error = new Error('User creation failed');
     (userService.createUser as jest.Mock).mockRejectedValue(error);
 

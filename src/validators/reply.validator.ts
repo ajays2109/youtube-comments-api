@@ -2,7 +2,7 @@ import Joi from 'joi';
 
 const createReply = {
   body: Joi.object({
-    videoId: Joi.string().required(),
+    videoId: Joi.string().uuid().required(),
     parentCommentId: Joi.string().required(),
     content: Joi.string().min(1).max(500).required(),
     userId: Joi.string().optional(),
@@ -13,18 +13,18 @@ const createReply = {
 
 const getRepliesByComment = {
   query: Joi.object({ 
-    commentId: Joi.string().required(),
+    commentId: Joi.string().uuid().required(),
     limit: Joi.number().integer().min(1).max(100).default(10).optional(),
-    lastReplyId: Joi.string().optional(),
+    lastReplyId: Joi.string().uuid().optional(),
   }),
 };
 
 const reactToReply = {
   params: Joi.object({
-    replyId: Joi.string().required(),
+    replyId: Joi.string().uuid().required(),
   }),
   body: Joi.object({
-    commentId: Joi.string().required(),
+    commentId: Joi.string().uuid().required(),
     type: Joi.string().valid('like', 'dislike').required(),
   }),
 };

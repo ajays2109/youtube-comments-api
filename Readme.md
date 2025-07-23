@@ -51,7 +51,7 @@ SCYLLADB_KEYSPACE=youtube_comments_app
 
 ### Database Setup
 
-Run the schema file to create tables:
+Run the schema file to create tables and insert sample values for videos:
 
 ```sh
 cqlsh -f db-schema.cql
@@ -69,6 +69,17 @@ Server runs at [http://localhost:3000](http://localhost:3000).
 
 - Postman collection [Link](https://documenter.getpostman.com/view/23770252/2sB34mjJvc#intro).
 
+### Workflow
+
+1. Fetch available videos using the `video/list` API.
+2. Create a new user using the `user/create` API (provide any username).
+3. Add a comment to a video using the `comment/create` API (provide `userName`, `videoId`, and `content`).
+4. React (like/dislike) to a comment using the `comment/react` API with any created username.
+5. List all comments for a video using the `comment/list` API.
+6. Create a reply to a comment using the `reply/create` API (provide `commentId`, `videoId`, `userName`, and `content`).
+7. React to a reply using the `reply/react` API.
+8. List all replies to a comment using the `reply/list` API.
+
 ## Scripts
 
 - `npm run start` — Start development server
@@ -84,6 +95,21 @@ Server runs at [http://localhost:3000](http://localhost:3000).
 - **Middlewares:** Express middlewares ([src/middlewares/](src/middlewares/))
 - **Validators:** Request validators ([src/validators/](src/validators/))
 - **utils:** Utility functions ([src/utils](src/utils/))
+
+## Improvements
+
+- Add authentication and authorization (e.g., JWT) for protected routes
+- Implement rate limiting to prevent spam and abuse
+- Add support for soft deletes and comment/reply editing history
+- Improve error handling and return more descriptive error messages
+- Add more comprehensive unit and integration tests
+- Implement caching for frequently accessed endpoints
+- Add Swagger/OpenAPI documentation endpoint
+- Support for user profile updates and avatars
+- Add Docker support for easier deployment
+- Implement WebSocket or Server-Sent Events for real-time comment updates
+- Add CI/CD pipeline for automated testing and deployment
+- Improve logging and monitoring (e.g., with Prometheus/Grafana)
 
 ## License
 

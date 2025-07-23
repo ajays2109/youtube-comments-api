@@ -17,6 +17,14 @@ app.use(authHandler);
 // Routes setup
 app.use('/api', routes);
 
+// 404 Handler for unknown routes
+app.use((req, res) => {
+  res.status(404).json({
+    status: 'error',
+    message: 'Route Not Found',
+  });
+});
+
 // Error handling middleware
 app.use(errorHandler);
 

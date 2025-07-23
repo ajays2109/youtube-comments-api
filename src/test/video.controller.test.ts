@@ -17,7 +17,7 @@ describe('Video Controller - getVideos', () => {
     mockNext = jest.fn();
   });
 
-  it('should return all videos with 200 status', async () => {
+  it('should return all videos with 200 status', async() => {
     const mockVideos = [
       { videoId: 'v1', title: 'First Video' },
       { videoId: 'v2', title: 'Second Video' },
@@ -34,7 +34,7 @@ describe('Video Controller - getVideos', () => {
     });
   });
 
-  it('should call next with error on failure', async () => {
+  it('should call next with error on failure', async() => {
     const error = new Error('DB failure');
     (videoService.getAllVideos as jest.Mock).mockRejectedValue(error);
 

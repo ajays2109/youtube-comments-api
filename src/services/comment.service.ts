@@ -2,7 +2,6 @@ import scyllaDbClient from '../db/scyllaDbClient';
 import logger from '../logger/winston';
 import { Comment, ScoredComment } from '../types';
 import { calculateCommentScore } from '../utils/score';
-
 /**
  * Service to handle comment-related operations.
  */
@@ -21,6 +20,13 @@ async function createComment(comment: Comment): Promise<void> {
       likesCount,
       dislikesCount,
     } = comment;
+
+    // Check if the video exists  
+    const videoExistsQuery = 'SELECT video_id FROM videos WHERE video_id = ?';
+    const videoResult = await scyllaDbClient.execute(videoExistsQuery, [videoId], { prepare: true });
+    if (videoResult.rowLength === 0) {
+      throw new Error(`Video with ID ${videoId} does not exist.`);
+    }
 
     // Calculate the score for the comment
     const score = calculateCommentScore({
