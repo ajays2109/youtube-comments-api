@@ -1,9 +1,9 @@
 {
   "name": "youtube-comments-api",
   "version": "1.0.0",
-  "main": "app.js",
+  "main": "server.ts",
   "scripts": {
-    "start": "ts-node-dev --respawn --transpile-only src/app.ts",
+    "start": "ts-node-dev --respawn --transpile-only src/server.ts",
     "build": "tsc",
     "test": "jest",
     "lint": "eslint src --ext .ts",

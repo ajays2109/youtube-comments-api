@@ -7,6 +7,13 @@ const router = Router();
 
 // Main route for the application
 
+router.use('/status', (req, res) => {
+  res.status(200).json({
+    status: 'success',
+    message: 'API is running smoothly',
+  });
+});
+
 // This route handles user-related operations
 router.use('/user', userRoutes);
 
