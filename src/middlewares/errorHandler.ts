@@ -6,6 +6,7 @@ import logger from '../logger/winston';
  * Logs the error details and sends a generic error response.
  */
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function errorHandler(err: Error, req: Request, res: Response, next: NextFunction) {
   // Log the error details
   logger.error({

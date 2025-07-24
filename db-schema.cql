@@ -67,8 +67,8 @@ CREATE TABLE IF NOT EXISTS scored_comments_by_video (
   likes_count INT,
   dislikes_count INT,
   replies_count INT,
-  PRIMARY KEY (video_id, comment_id)
-) WITH CLUSTERING ORDER BY (comment_id DESC);
+  PRIMARY KEY (video_id, score, comment_id)
+) WITH CLUSTERING ORDER BY (score DESC, comment_id ASC);
 
 -- Likes/Dislikes table
 CREATE TABLE IF NOT EXISTS comment_reactions_by_user (

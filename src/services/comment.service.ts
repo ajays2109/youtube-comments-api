@@ -51,19 +51,20 @@ async function createComment(comment: Comment): Promise<void> {
     await scyllaDbClient.execute(query, params, { prepare: true });
     // Insert the scored comment into a separate table for scoring
     // This allows for efficient retrieval of comments with their scores
-    const scoreQuery = 'INSERT INTO scored_comments_by_video (video_id, comment_id, user_id, user_name, content, created_at, edited, likes_count, dislikes_count, replies_count, score) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+    const scoreQuery = 'INSERT INTO scored_comments_by_video (video_id, score, comment_id,user_id, user_name, user_avatar,content, created_at, edited,likes_count, dislikes_count, replies_count) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
     const scoreParams = [
       videoId,
+      score,
       commentId,
       userId,
       userName,
+      userAvatar || null,
       content,
       createdAt,
       edited,
       likesCount,
       dislikesCount,
-      0, // Assuming replies_count is initially 0
-      score,
+      0,
     ];
     await scyllaDbClient.execute(scoreQuery, scoreParams, { prepare: true });
   } catch (error) {
@@ -112,12 +113,6 @@ async function getCommentsByVideo(videoId: string, sort: 'top' | 'new' = 'new', 
       }
       return comment;
     });
-    if (isTop) {
-      // Sort top comments by score in descending order
-      // This ensures that the top comments are returned in the correct order
-      return (response as ScoredComment[]).sort((a, b) => b.score - a.score);
-    }
-
     return response;
   }
   catch (error) {
@@ -128,51 +123,90 @@ async function getCommentsByVideo(videoId: string, sort: 'top' | 'new' = 'new', 
 
 async function reactToComment(videoId: string, commentId: string, type: 'like' | 'dislike') {
   try {
-    // Fetch current values from scored_comments_by_video
+    // Fetch current comment row from scored_comments_by_video
     const selectQuery = `
-        SELECT created_at, likes_count, dislikes_count
-        FROM scored_comments_by_video
-        WHERE video_id = ? AND comment_id = ?
-        `;
-    const result = await scyllaDbClient.execute(selectQuery, [videoId, commentId], { prepare: true });
-    const row = result.first();
+      SELECT * FROM scored_comments_by_video
+      WHERE video_id = ? ALLOW FILTERING
+    `;
+    const result = await scyllaDbClient.execute(selectQuery, [videoId], { prepare: true });
 
-    if (!row) throw new Error('Comment not found');
+    // Find the row with the correct commentId manually since comment_id is clustering, not primary
+    const row = result.rows.find(r => r.comment_id.toString() === commentId);
 
-    const updatedLikes = row.likes_count + (type === 'like' ? 1 : 0);
-    const updatedDislikes = row.dislikes_count + (type === 'dislike' ? 1 : 0);
+    if (!row) {
+      throw new Error(`Comment ${commentId} not found for video ${videoId}`);
+    }
 
-    // Recalculate score
-    const score = calculateCommentScore({
+    const {
+      likes_count,
+      dislikes_count,
+      created_at,
+      user_id,
+      user_name,
+      user_avatar,
+      content,
+      edited,
+      replies_count,
+      score: oldScore,
+    } = row;
+
+    // Compute new like/dislike counts
+    const updatedLikes = likes_count + (type === 'like' ? 1 : 0);
+    const updatedDislikes = dislikes_count + (type === 'dislike' ? 1 : 0);
+
+    // Compute new score
+    const newScore = calculateCommentScore({
       likes: updatedLikes,
       dislikes: updatedDislikes,
-      createdAt: row.created_at,
+      createdAt: created_at,
     });
 
-    // Update both tables using full value set (read-modify-write pattern)
-    const updateCommentQuery = `
-        UPDATE comments_by_video
-        SET likes_count = ?, dislikes_count = ?
-        WHERE video_id = ? AND comment_id = ?
-        `;
-    await scyllaDbClient.execute(updateCommentQuery, [
+    // 1. Update in comments_by_video (can use UPDATE directly)
+    const updateMainQuery = `
+      UPDATE comments_by_video
+      SET likes_count = ?, dislikes_count = ?
+      WHERE video_id = ? AND comment_id = ?
+    `;
+    await scyllaDbClient.execute(updateMainQuery, [
       updatedLikes,
       updatedDislikes,
       videoId,
       commentId,
     ], { prepare: true });
 
-    const updateScoreQuery = `
-        UPDATE scored_comments_by_video
-        SET likes_count = ?, dislikes_count = ?, score = ?
-        WHERE video_id = ? AND comment_id = ?
-        `;
-    await scyllaDbClient.execute(updateScoreQuery, [
+    // 2. Delete old scored comment (based on old score)
+    const deleteQuery = `
+      DELETE FROM scored_comments_by_video
+      WHERE video_id = ? AND score = ? AND comment_id = ?
+    `;
+    await scyllaDbClient.execute(deleteQuery, [
+      videoId,
+      oldScore,
+      commentId,
+    ], { prepare: true });
+
+    // 3. Insert new scored comment with updated score
+    const insertQuery = `
+      INSERT INTO scored_comments_by_video (
+        video_id, score, comment_id,
+        user_id, user_name, user_avatar,
+        content, created_at, edited,
+        likes_count, dislikes_count, replies_count
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `;
+    await scyllaDbClient.execute(insertQuery, [
+      videoId,
+      newScore,
+      commentId,
+      user_id,
+      user_name,
+      user_avatar,
+      content,
+      created_at,
+      edited,
       updatedLikes,
       updatedDislikes,
-      score,
-      videoId,
-      commentId,
+      replies_count ?? 0,
     ], { prepare: true });
 
   } catch (error) {
